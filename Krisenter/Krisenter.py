@@ -343,8 +343,19 @@ class Krisenter(Extension):
     pass
 
   def createActions(self, window):
-    action = window.createAction("kritaSlidyAction", "Krisenter", "tools/scripts")
-    action.triggered.connect(self.actionKrisenter)
+    action_tool = window.createAction("kritaSlidyAction", "Krisenter", "tools/scripts")
+    action_tool.triggered.connect(self.actionKrisenter)
+
+    action_next = window.createAction('nextSlide',
+                                      'Goto next slide',
+                                      'tools/scripts')
+    action_next.triggered.connect(self.gotoNextSlide)
+
+    action_prev = window.createAction('prevSlide',
+                                      'Goto prev slide',
+                                      'tools/scripts')
+    action_prev.triggered.connect(self.gotoPrevSlide)
+
     self.qwindow = window.qwindow() # Keep reference around for the messagebox
 
   def actionKrisenter(self):
@@ -396,6 +407,18 @@ class Krisenter(Extension):
                          'Error',
                          message)
 
+  def gotoNextSlide(self):
+    try:
+      krita.krisenter_navigator.next_page()
+    except:
+      self.error_message('No krisenter pdfloaded!')
+        
+
+  def gotoPrevSlide(self):
+    try:
+      krita.krisenter_navigator.prev_page()
+    except:
+      self.error_message('No krisenter pdf loaded!')
 
 # And add the extension to Krita's list of extensions:
 Krita.instance().addExtension(Krisenter(Krita.instance()))
