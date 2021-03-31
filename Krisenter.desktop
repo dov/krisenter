@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Krita/PythonPlugin
+X-KDE-Library=Krisenter
+X-Python-2-Compatible=false
+X-Krita-Manual=Krisenter.html
+Name=Krisenter
+Comment=Load a pdf presentation
+

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Krita/PythonPlugin
+X-KDE-Library=PrevSlide
+X-Python-2-Compatible=false
+X-Krita-Manual=PrevSlide.html
+Name=Prev Slide
+Comment=Goto previous slide
+

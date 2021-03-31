@@ -1,0 +1,28 @@
+#+STARTUP: hidestars showall beamer
+#+AUTHOR: Dov Grobgeld
+#+EMAIL:     dov.grobgeld@gmail.com
+#+TITLE: Krisenter
+#+DATE: 2021-03-31 Wed
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+BEAMER_FRAME_LEVEL: 2
+#+BEAMER_THEME: Rochester [height=20pt]
+#+HTML_LINK_UP:
+#+HTML_LINK_HOME:
+
+* Krisenter presentation
+
+** Intro section
+
+*** PDF + Krita
+- Presentations in Krita
+
+- Equations and Krita
+
+\[ E = \frac{m_0 c^2}{\sqrt{1-\frac{v^2}{c^2}}} \]
