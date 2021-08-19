@@ -8,7 +8,8 @@ Dov Grobgeld <dov.grobgeld@gmail.com>
 import os
 import tempfile
 from PIL import Image
-from poppler import load_from_file, PageRenderer, RenderHint
+from poppler.document import load_from_file
+from poppler.pagerenderer import PageRenderer, RenderHint
 from krita import *
 
 class PopplerNavigor:
