@@ -44,7 +44,7 @@ def export_pdf(pdf_filename,
     # Convert the krita page to rgb and alpha
     pixeldata = nodes[page_idx+1].pixelData(0,0,im_width,im_height)
     rgba = Image.frombytes('RGBA', (im_width,im_height), pixeldata)
-    alpha = rgba.getchannel('A')
+    red,green,blue,alpha = rgba.split()
 
     # No point in adding transparent image
     max_alpha = alpha.getextrema()[1]
@@ -55,9 +55,8 @@ def export_pdf(pdf_filename,
     print(f'Annotating page {page_idx+1}')
 
     rgb = Image.new("RGB", (im_width,im_height), (255, 255, 255))
-    rgb.paste(rgba, mask=alpha)
+
     # Swap Red and Blue
-    red,green,blue = rgb.split()
     rgb = Image.merge('RGB',[blue,green,red])
 
     if '/Resources' not in page:
@@ -112,8 +111,8 @@ q
 {pt_width:.2f} 0 0 {pt_height:.2f} 0 0 cm
 {prefix} Do
 Q\n'''.encode()
-    page.page_contents_add(pikepdf.Stream(pdf, 'q\n'.encode()), prepend=True)
-    page.page_contents_add(pikepdf.Stream(pdf, png_content), prepend=False)
+    page.contents_add(pikepdf.Stream(pdf, 'q\n'.encode()), prepend=True)
+    page.contents_add(pikepdf.Stream(pdf, png_content), prepend=False)
     if '/Resources' not in page:
       page['/Resources'] = pikepdf.Dictionary(XObject=pikepdf.Dictionary())
     elif '/XObject' not in page['/Resources']:
