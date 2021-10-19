@@ -43,7 +43,15 @@ def export_pdf(pdf_filename,
 
     # Convert the krita page to rgb and alpha
     pixeldata = nodes[page_idx+1].pixelData(0,0,im_width,im_height)
-    rgba = Image.frombytes('RGBA', (im_width,im_height), pixeldata)
+    node_color_depth = nodes[page_idx+1].colorDepth()
+    node_color_model = nodes[page_idx+1].colorModel()
+    print(f'im_width im_height len(pixeldata)={im_width} {im_height} {len(pixeldata)} depth={node_color_depth} model={node_color_model}')
+    
+    if node_color_model == 'A':
+      # I don't understand why this happens! 
+      rgba = Image.frombytes('L', (im_width,im_height), pixeldata).convert('RGBA')
+    else:
+      rgba = Image.frombytes('RGBA', (im_width,im_height), pixeldata)
     red,green,blue,alpha = rgba.split()
 
     # No point in adding transparent image
