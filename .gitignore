@@ -7,3 +7,5 @@
 *.snm
 *.tex
 *.toc
+__pycache__
+.venv
