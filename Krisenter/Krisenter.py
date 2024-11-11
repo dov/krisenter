@@ -25,6 +25,85 @@ from krita import *
 # An enum as a class
 CLOSE_PRESENTATION = -1
 
+# This allows focusing or adding a new layer for drawing
+def focus_next_layer():
+    # Get the active document and the active node (layer)
+    doc = Krita.instance().activeDocument()
+    if not doc:
+        return
+
+    current_layer = doc.activeNode()
+    if not current_layer:
+        return
+
+    # Get the parent of the current layer
+    parent = current_layer.parentNode()
+    if not parent:
+        return
+
+    # Get the list of all child layers of the parent
+    layers = parent.childNodes()
+
+    # Find the index of the current layer
+    current_index = layers.index(current_layer)
+
+    # Turn off the visibility of the current layer
+    current_layer.setVisible(False)
+
+    # Check if the current layer is the top layer
+    if current_index == len(layers) - 1:
+        # Create a new layer and set its visibility to on
+        new_layer_id = len(layers)
+        new_layer_name = f"Paint Layer {new_layer_id}"
+        new_layer = doc.createNode(new_layer_name, "paintlayer")
+        parent.addChildNode(new_layer, None)
+        new_layer.setVisible(True)
+        doc.setActiveNode(new_layer)
+    else:
+        # Turn on the visibility of the next layer
+        next_layer = layers[current_index + 1]
+        next_layer.setVisible(True)
+        doc.setActiveNode(next_layer)
+    doc.refreshProjection()
+
+# This allows focusing the previous layer
+def focus_prev_layer():
+    # Get the active document and the active node (layer)
+    doc = Krita.instance().activeDocument()
+    if not doc:
+        return
+
+    current_layer = doc.activeNode()
+    if not current_layer:
+        return
+
+    # Get the parent of the current layer
+    parent = current_layer.parentNode()
+    if not parent:
+        return
+
+    # Get the list of all child layers of the parent
+    layers = parent.childNodes()
+
+    # Find the index of the current layer
+    current_index = layers.index(current_layer)
+
+    if current_index == 1:
+      QMessageBox.critical(self.qwindow,
+                           'Error',
+                           'Already at first page')
+      return
+      
+    # Turn off the visibility of the current layer
+    current_layer.setVisible(False)
+
+    # Turn on the visibility of the next layer
+    prev_layer = layers[current_index -1]
+    prev_layer.setVisible(True)
+    doc.setActiveNode(prev_layer)
+    doc.refreshProjection()
+
+
 def export_pdf(pdf_filename,
                output_pdf,
                doc):
@@ -44,8 +123,16 @@ def export_pdf(pdf_filename,
 
     # Convert the krita page to rgb and alpha
     pixeldata = nodes[page_idx+1].pixelData(0,0,im_width,im_height)
-    rgba = Image.frombytes('RGBA', (im_width,im_height), pixeldata)
-    alpha = rgba.getchannel('A')
+    node_color_depth = nodes[page_idx+1].colorDepth()
+    node_color_model = nodes[page_idx+1].colorModel()
+    print(f'im_width im_height len(pixeldata)={im_width} {im_height} {len(pixeldata)} depth={node_color_depth} model={node_color_model}')
+    
+    if node_color_model == 'A':
+      # I don't understand why this happens! 
+      rgba = Image.frombytes('L', (im_width,im_height), pixeldata).convert('RGBA')
+    else:
+      rgba = Image.frombytes('RGBA', (im_width,im_height), pixeldata)
+    red,green,blue,alpha = rgba.split()
 
     # No point in adding transparent image
     max_alpha = alpha.getextrema()[1]
@@ -56,9 +143,8 @@ def export_pdf(pdf_filename,
     print(f'Annotating page {page_idx+1}')
 
     rgb = Image.new("RGB", (im_width,im_height), (255, 255, 255))
-    rgb.paste(rgba, mask=alpha)
+
     # Swap Red and Blue
-    red,green,blue = rgb.split()
     rgb = Image.merge('RGB',[blue,green,red])
 
     if '/Resources' not in page:
@@ -113,8 +199,8 @@ q
 {pt_width:.2f} 0 0 {pt_height:.2f} 0 0 cm
 {prefix} Do
 Q\n'''.encode()
-    page.page_contents_add(pikepdf.Stream(pdf, 'q\n'.encode()), prepend=True)
-    page.page_contents_add(pikepdf.Stream(pdf, png_content), prepend=False)
+    page.contents_add(pikepdf.Stream(pdf, 'q\n'.encode()), prepend=True)
+    page.contents_add(pikepdf.Stream(pdf, png_content), prepend=False)
     if '/Resources' not in page:
       page['/Resources'] = pikepdf.Dictionary(XObject=pikepdf.Dictionary())
     elif '/XObject' not in page['/Resources']:
@@ -412,14 +498,14 @@ class Krisenter(Extension):
     try:
       krita.krisenter_navigator.next_page()
     except:
-      self.error_message('No krisenter pdfloaded!')
-        
+      # Just find the next layer and focus it
+      focus_next_layer()
 
   def gotoPrevSlide(self):
     try:
       krita.krisenter_navigator.prev_page()
     except:
-      self.error_message('No krisenter pdf loaded!')
+      focus_prev_layer()
 
 # And add the extension to Krita's list of extensions:
 Krita.instance().addExtension(Krisenter(Krita.instance()))

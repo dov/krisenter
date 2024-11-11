@@ -19,7 +19,6 @@ The installation has currently only been tested on a Linux box. I'll be happy to
   * pikepdf 
   * image 
   * poppler-utils
-
 2. Run the script `install.sh` to install in the users home directory.
 3. Run Krita
 4. Choose Menu Item Settings→Configure Krita→Python Plugin Manager
