@@ -15,14 +15,12 @@ The installation has currently only been tested on a Linux box. I'll be happy to
 
 1. Install the dependent python packages, e.g. with pip.
   * pikeqdf
-  * poppler
+  * python-poppler
 2. Run the script `install.sh` to install in the users home directory.
 3. Run Krita
 4. Choose Menu Item Settings→Configure Krita→Python Plugin Manager
 5. Activate:
   * Krisenter
-  * Next Slide
-  * Previous slide
 6. Restart Krita
 
 # Running
